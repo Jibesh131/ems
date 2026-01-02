@@ -1,11 +1,22 @@
 @extends('admin.layout.app')
 
 @push('css')
+    <style>
+        .badge {
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: #0c9f10;
+        }
+    </style>
 @endpush
 
 @section('content')
     <div class="card-header text-end">
-        <a href="{{ route('admin.subject.add.view') }}" class="btn btn-primary btn-sm">
+        <a href="{{ route('admin.subject.add') }}" class="btn btn-primary btn-sm">
             Add New
         </a>
     </div>
@@ -14,6 +25,7 @@
             <table class="table table-bordered location-table">
                 <thead>
                     <tr>
+                        <th>#</th>
                         <th>Name</th>
                         <th>Description</th>
                         <th>Status</th>
@@ -26,9 +38,19 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $subject->name }}</td>
-                            <td>{{ $subject->description }}</td>
-                            <td>{{ $subject->status }}</td>
+                            <td>{{ setLengthLimit($subject->description) }}</td>
+                            <td>
+                                <span class="badge {{ status_badge($subject->status) }}">
+                                    {{ ucfirst($subject->status) }}
+                                </span>
+                            </td>
                             <td>{{ $subject->created_at->format('d M Y') }}</td>
+                            <td>
+                                <a href="{{ route('admin.subject.edit', $subject->id) }}" class="btn bg-info-gradient text-white">
+                                    <i class="fa-solid fa-pen-to-square"></i></a>
+                                <a href="{{ route('admin.subject.delete', $subject->id) }}" class="btn bg-danger-gradient text-white">
+                                    <i class="fa-solid fa-trash"></i></a>
+                            </td>
                         </tr>
                     @empty
                         <tr>

@@ -1,3 +1,7 @@
+@php
+use Illuminate\Support\Str;
+@endphp
+
 <div class="sidebar" data-background-color="dark">
     <div class="sidebar-logo">
         <div class="logo-header" data-background-color="dark">
@@ -27,22 +31,16 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item {{ Str::is('admin.subject.*', request()->route()->getName()) ? 'active' : '' }}">
                     <a href="{{ route('admin.subject.index') }}">
                         <i class="fa-solid fa-book"></i>
                         <p>Subjects</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ '' }}">
+                    <a href="{{ route('admin.teacher.index') }}">
                         <i class="fa-solid fa-graduation-cap"></i>
-                        <p>Subjects</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ '' }}">
-                        <i class="fa-solid fa-school"></i>
-                        <p>Subjects</p>
+                        <p>Teacher</p>
                     </a>
                 </li>
                 {{-- <li class="nav-item {{ (request()?->route()?->getName() ?? '') == 'admin.index' ? 'active' : '' }}">
