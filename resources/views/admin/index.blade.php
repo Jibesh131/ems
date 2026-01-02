@@ -8,7 +8,7 @@
     <h1>Dashboard</h1>
 </div>
 <div class="card-body">
-    <div>Asdf</div>
+    <div>Dashboard Content</div>
 </div>
 @endsection
 

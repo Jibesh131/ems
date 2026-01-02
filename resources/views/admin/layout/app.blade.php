@@ -42,8 +42,6 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" />
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
-    
-    @livewireStyles
 
     <script src="{{ asset('admin/js/core/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('admin/js/core/popper.min.js') }}"></script>
@@ -111,7 +109,7 @@
                     cancelButtonText: 'Cancel',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = "{{  }}";
+                        window.location.href = "{{ '' }}";
                     }
                 });
             })
@@ -164,7 +162,6 @@
         }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
-    @livewireScripts
     @stack('js')
 </body>
 

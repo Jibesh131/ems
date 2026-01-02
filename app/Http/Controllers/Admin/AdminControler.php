@@ -9,12 +9,8 @@ class AdminControler extends Controller
 {
     public function index(){
         $title = 'Dashboard';
-        $search = true;
-        $links = [
-            [
-                'name' => $title
-            ]
-        ];
+        $search = false;
+        $links = [];
         // $contents = $contents->paginate(10);
 
         return view('admin.index', compact('title', 'search', 'links'));

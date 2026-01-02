@@ -28,9 +28,21 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route('admin.subject.index') }}">
+                        <i class="fa-solid fa-book"></i>
+                        <p>Subjects</p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ '' }}">
-                        <i class="fa-solid fa-paperclip"></i>
-                        <p>My Content</p>
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <p>Subjects</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ '' }}">
+                        <i class="fa-solid fa-school"></i>
+                        <p>Subjects</p>
                     </a>
                 </li>
                 {{-- <li class="nav-item {{ (request()?->route()?->getName() ?? '') == 'admin.index' ? 'active' : '' }}">

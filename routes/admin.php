@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminControler;
+use App\Http\Controllers\Admin\SubjectController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/',[AdminControler::class, 'index'])->name('dashboard');
+// admin is as prefix & name
 
-Route::get('/dashboard', function () {
-    return "Admin Dashboard";
-});
+Route::get('/',[AdminControler::class, 'index'])->name('dashboard');
 
-Route::get('/', function () {
-    return "Admin Home";
+Route::prefix('subject')->as('subject.')->group(function () {
+    Route::get('list', [SubjectController::class, 'index'])->name('index');
+    Route::get('add', [SubjectController::class, 'add'])->name('add.view');
+    Route::post('add', [SubjectController::class, 'index'])->name('add.post');
 });
