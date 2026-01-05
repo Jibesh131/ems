@@ -11,10 +11,6 @@
         .badge-success {
             background-color: #0c9f10;
         }
-        .card .row{
-            margin-right: 0;
-            margin-left: 0;
-        }
     </style>
 @endpush
 
@@ -25,72 +21,173 @@
         </a>
     </div>
     <div class="card-body">
-        <div class="card shadow-sm mb-3 border border-1">
-            <div class="row w-100">
-                <div class="col-md-2 d-flex align-items-center justify-content-center bg-light">
-                    <img src="https://i.pravatar.cc/150?img=5" class="img-fluid rounded-circle" alt="Teacher">
-                </div>
-                <div class="col-md-10">
-                    <div class="card-body p-3 d-flex flex-column">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <div>
-                                <h5 class="card-title mb-1">
-                                    Dr. Sarah Johnson
-                                    <span class="badge bg-success mx-2 p-2 py-1">Active</span>
-                                </h5>
-                                <span class="badge bg-primary me-1">Mathematics</span>
-                                <span class="badge bg-primary me-1">Statistics</span>
-                                <span class="badge bg-primary me-1">Statistics</span>
-                                <span class="badge bg-primary me-1">Statistics</span>
+        @forelse ($teachers as $teacher)
+            <div class="card shadow-sm mb-3 border border-1" style="overflow: hidden;">
+                <div class="row w-100">
+                    <div class="col-md-2 d-flex align-items-center justify-content-center ps-5">
+                        <img src="{{ asset('../storage/' . $teacher->profile_pic) }}"
+                            class="img-fluid img-thumbnail rounded-circle" alt="{{ $teacher->name }}" width="115px">
+                    </div>
+                    <div class="col-md-10">
+                        <div class="card-body p-3 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h5 class="card-title mb-1">
+                                        {{ $teacher->name }}
+                                        <span
+                                            class="badge {{ status_badge($teacher->status) }} mx-2 p-2 py-1">{{ ucfirst($teacher->status) }}</span>
+                                    </h5>
+                                    @php
+                                        $subjectNames = $teacher->getSubjectNames();
+                                    @endphp
+                                    @foreach ($subjectNames as $subjectName)
+                                        <span class="badge bg-primary me-1">{{ $subjectName }}</span>
+                                    @endforeach
+                                </div>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn bg-primary-gradient text-light" data-toggle="tooltip"
+                                        data-placement="top" title="Edit Teacher">
+                                        <i class="fa fa-pencil"></i>
+                                    </button>
+                                    <button class="btn bg-danger-gradient text-light" data-toggle="tooltip"
+                                        data-placement="top" title="Delete Teacher">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                    <button class="btn bg-secondary-gradient text-light" data-toggle="tooltip"
+                                        data-placement="top" title="Schedule">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                    </button>
+                                    <button id="openModalBtn"
+                                        style="padding-right: 15.25px !important; padding-left: 15.25px !important;"
+                                        class="btn bg-black-gradient text-light px-3 fees-model" data-bs-toggle="modal"
+                                        data-bs-target="#sessionFeesModel" data-toggle="tooltip" data-placement="top"
+                                        title="Schedule" data-teacher-id="{{ $teacher->id ?? '0' }}">
+
+                                        <i class="fa-solid fa-hand-holding-dollar fa-lg"></i>
+                                        <span class="spinner-border spinner-border-sm text-light d-none"
+                                            role="status"></span>
+                                    </button>
+
+                                </div>
                             </div>
-                            <div class="d-flex gap-1">
-                                <button class="btn btn bg-primary-gradient text-light" data-toggle="tooltip" data-placement="top" title="Edit Teacher">
-                                    <i class="fa fa-pencil"></i>
-                                </button>
-                                <button class="btn bg-danger-gradient text-light" data-toggle="tooltip" data-placement="top" title="Delete Teacher">
-                                    <i class="fa fa-trash"></i>
-                                </button>
-                                <button class="btn bg-secondary-gradient text-light" data-toggle="tooltip" data-placement="top" title="Schedule">
-                                    <i class="fa-solid fa-calendar-days"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="row flex-grow-1">
-                            <div class="col-md-6">
-                                <p class="mb-1 small">
-                                    <strong>Email:</strong>
-                                    <a href="mailto:sarah.johnson@school.edu">sarah.johnson@school.edu</a>
-                                </p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1 small">
-                                    <strong>Phone:</strong>
-                                    <a href="tel:+15551234567">+1 (555) 123-4567</a>
-                                </p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1 small"><strong>Qualification:</strong> Ph.D. in Mathematics</p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-0 small"><strong>Employee ID:</strong> TCH-2024-001</p>
-                            </div>
-                            <div class="col-md-6 d-none">
-                                <div
-                                    class="border border-2 border-dashed border-secondary rounded p-2 d-flex align-items-center justify-content-center">
-                                    <small class="text-muted text-center">
-                                        <i class="bi bi-plus-circle fs-5 d-block mb-1"></i>
-                                        Feature Placeholder
-                                    </small>
+                            <div class="row flex-grow-1">
+                                <div class="col-md-6">
+                                    <p class="mb-1 small">
+                                        <strong>Email:</strong>
+                                        <a href="mailto:{{ $teacher->email ?? '' }}">{{ $teacher->email ?? '(empty)' }}</a>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1 small">
+                                        <strong>Phone:</strong>
+                                        <a href="tel:{{ $teacher->phone ?? '' }}">{{ $teacher->phone ?? '(empty)' }}</a>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1 small"><strong>Qualification:</strong> Ph.D. in Mathematics</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-0 small"><strong>Employee ID:</strong> TCH-2024-001</p>
+                                </div>
+                                <div class="col-md-6 d-none">
+                                    <div
+                                        class="border border-2 border-dashed border-secondary rounded p-2 d-flex align-items-center justify-content-center">
+                                        <small class="text-muted text-center">
+                                            <i class="bi bi-plus-circle fs-5 d-block mb-1"></i>
+                                            Feature Placeholder
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @empty
+            <div class="card shadow-sm mb-3 border border-1 text-center">No records found</div>
+        @endforelse
         {{-- @include('admin.layout.inc.paginate', ['item' => $subjects]) --}}
     </div>
 @endsection
 
+@push('modal')
+    <!-- Session Fees Modal -->
+    <div class="modal fade" id="sessionFeesModel" tabindex="-1" aria-labelledby="sessionFeesModelLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sessionFeesModelLabel">Session Fees</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalContent">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Subject</label>
+                                <select name="subject[]" id="subject" class="form-control">
+                                    <option value="">Select Subject</option>
+                                    @foreach ($subjects as $subject)
+                                        <option value="{{ $subject->id ?? '' }}">{{ $subject->name ?? '' }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="">Session Fees</label>
+                                <input type="number" name="fees[]" id="fees" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary d-none">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endpush
+
+
 @push('js')
+    <script>
+        $(document).ready(function() {
+            $('.fees-model').on('click', function(e) {
+                e.preventDefault();
+
+                var $btn = $(this);
+                var $spinner = $btn.find('.spinner-border');
+                var $icon = $btn.find('.btn-icon');
+                var $modalContent = $('#modalContent');
+                var teacher_id = $btn.data('teacher-id');
+
+                $btn.prop('disabled', true);
+                $spinner.removeClass('d-none');
+                $icon.addClass('d-none');
+
+                $modalContent.html('<div class="text-center py-3">Loading...</div>');
+
+                // Ajax call
+                $.ajax({
+                    url: '{{ route("admin.teacher.fees", ":id") }}'.replace(':id', teacher_id),
+                    method: 'GET',
+                    dataType: 'html',
+                    success: function(response) {
+                        $modalContent.html(response);
+                    },
+                    error: function() {
+                        $modalContent.html(
+                            '<div class="text-danger text-center">Failed to load data.</div>'
+                            );
+                    },
+                    complete: function() {
+                        $spinner.addClass('d-none');
+                        $icon.removeClass('d-none');
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
+        });
+    </script>
 @endpush

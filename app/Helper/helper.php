@@ -1,7 +1,9 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('route_details')) {
     function route_details($route)
@@ -63,6 +65,42 @@ if (!function_exists('format_amount_without_commas')) {
     }
 }
 
+if (!function_exists('uploadImage')) {
+
+    /**
+     * Upload an image to storage with unique name
+     *
+     * @param UploadedFile|string|null $image The uploaded file from request
+     * @param string $folder The folder in 'storage/app/public' to save
+     * @param string|null $oldFile Optional: path of old file to delete
+     * @return string|null Stored file path relative to 'storage/app/public'
+     */
+    function uploadImage($image, string $folder = 'images', ?string $oldFile = null): ?string
+    {
+        if (!$image) {
+            // If no new image, return old file or null
+            return $oldFile ?? null;
+        }
+
+        // Make sure folder exists
+        if (!Storage::disk('public')->exists($folder)) {
+            Storage::disk('public')->makeDirectory($folder);
+        }
+
+        // Delete old file if exists
+        if ($oldFile && Storage::disk('public')->exists($oldFile)) {
+            Storage::disk('public')->delete($oldFile);
+        }
+
+        // Build unique filename: uniqid + timestamp + original extension
+        $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
+
+        // Store in given folder
+        return $image->storeAs($folder, $filename, 'public');
+    }
+}
+
+
 if (! function_exists('json_to_array')) {
     function json_to_array($data)
     {
@@ -78,7 +116,7 @@ if (! function_exists('json_to_array')) {
 }
 
 if (! function_exists('setLengthLimit')) {
-    function setLengthLimit($str, $len=30, $ifNull = '--')
+    function setLengthLimit($str, $len = 30, $ifNull = '--')
     {
         if (is_null($str) || $str === '') {
             return $ifNull;
@@ -115,7 +153,7 @@ if (!function_exists('status_badge')) {
      */
     function status_badge($status)
     {
-        return match(strtolower($status)) {
+        return match (strtolower($status)) {
             'active' => 'badge-success',
             'inactive' => 'badge-danger',
             'pending' => 'badge-warning',
@@ -123,4 +161,3 @@ if (!function_exists('status_badge')) {
         };
     }
 }
-

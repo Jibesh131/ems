@@ -87,26 +87,53 @@
                 </div>
                 <div class="col-md-12">
                     <h5 class="mt-3 border-bottom border-3 pb-2">Session Fees per Subject</h5>
+                    @php
+                        $oldSubjects = old('subjects');
+                        $oldFees = old('fees');
+
+                        if (empty($oldSubjects) || !is_array($oldSubjects)) {
+                            $oldSubjects = [''];
+                        }
+                        if (empty($oldFees) || !is_array($oldFees)) {
+                            $oldFees = [''];
+                        }
+                    @endphp
 
                     <div id="fee-rows">
-                        <div class="row fee-row mb-3">
-                            <div class="form-group col-md-6">
-                                <label>Subject</label>
-                                <select name="subjects[]" class="form-select">
-                                    <option value="">Select Subject</option>
-                                    @forelse ($subjects as $subject)
-                                        <option value="{{ $subject->id }}">{{ $subject->name }}</option>
-                                    @empty
-                                        <option value="" disabled>No subject available</option>
-                                    @endforelse
-                                </select>
-                            </div>
+                        @foreach ($oldSubjects as $index => $subjectId)
+                            @php
+                                $fee = $oldFees[$index] ?? '';
+                            @endphp
+                            
+                            @if ($index === 0 || !empty($subjectId) || !empty($fee))
+                                <div class="row fee-row mb-3">
+                                    <div class="form-group col-md-6">
+                                        <label>Subject</label>
+                                        <select name="subjects[]" class="form-select">
+                                            <option value="">Select Subject</option>
+                                            @foreach ($subjects as $subject)
+                                                <option value="{{ $subject->id }}"
+                                                    {{ $subjectId == $subject->id ? 'selected' : '' }}>
+                                                    {{ $subject->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @error('subjects.' . $index)
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
 
-                            <div class="form-group col-md-6">
-                                <label>Session Fees ($)</label>
-                                <input type="number" name="fees[]" class="form-control" min="0">
-                            </div>
-                        </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Session Fees ($)</label>
+                                        <input type="number" name="fees[]" class="form-control" min="0"
+                                            value="{{ $fee }}">
+                                        @error('fees.' . $index)
+                                            <small class="text-danger">{{ $message }}</small>
+                                        @enderror
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
                     </div>
 
                     <div class="col-md-12 mb-3 text-end">
@@ -129,11 +156,10 @@
     <script>
         $(document).ready(function() {
             $('#add-row').click(function() {
-                let $firstRow = $('.fee-row:first');
-                let $newRow = $firstRow.clone();
-                $newRow.find('select').val('');
-                $newRow.find('input').val('');  
-                $('#fee-rows').append($newRow);
+                let $firstRow = $('.fee-row:first').clone();
+                $firstRow.find('select').val('');
+                $firstRow.find('input').val('');
+                $('#fee-rows').append($firstRow);
             });
         });
     </script>
