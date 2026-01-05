@@ -21,8 +21,9 @@ class TeacherController extends Controller
                 'name' => $title
             ]
         ];
-        $teachers = User::where('role', 'teacher')->orderBy('name')->get();
+        $teachers = User::where('role', 'teacher')->orderBy('name');
         $subjects = Subject::where('status', 'active')->get();
+        $teachers = $teachers->paginate(10);
         return view('admin.teacher.index', compact('title', 'search', 'links', 'teachers', 'subjects'));
     }
 

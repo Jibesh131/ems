@@ -41,7 +41,7 @@
                                         $subjectNames = $teacher->getSubjectNames();
                                     @endphp
                                     @foreach ($subjectNames as $subjectName)
-                                        <span class="badge bg-primary me-1">{{ $subjectName }}</span>
+                                        <span class="badge bg-primary me-0">{{ $subjectName }}</span>
                                     @endforeach
                                 </div>
                                 <div class="d-flex gap-1">
@@ -106,7 +106,7 @@
         @empty
             <div class="card shadow-sm mb-3 border border-1 text-center">No records found</div>
         @endforelse
-        {{-- @include('admin.layout.inc.paginate', ['item' => $subjects]) --}}
+        @include('admin.layout.inc.paginate', ['item' => $teachers])
     </div>
 @endsection
 
@@ -158,7 +158,7 @@
 
                 var $btn = $(this);
                 var $spinner = $btn.find('.spinner-border');
-                var $icon = $btn.find('.btn-icon');
+                var $icon = $btn.find('i');
                 var $modalContent = $('#modalContent');
                 var teacher_id = $btn.data('teacher-id');
 
