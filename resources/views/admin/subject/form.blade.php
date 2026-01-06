@@ -1,6 +1,12 @@
 @extends('admin.layout.app')
 
 @push('css')
+    <style>
+        .selectgroup-button {
+            padding: 0.65rem 0rem;
+            color: #747c8d;
+        }
+    </style>
 @endpush
 
 @php

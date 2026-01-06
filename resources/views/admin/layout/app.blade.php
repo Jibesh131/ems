@@ -143,7 +143,7 @@
             };
 
             const iconClass = icons[type] || icons.default;
-            const titleHtml = title ? `<strong>${title}</strong><br>` : '';
+            const titleHtml = title ? `<strong class="text-capitalize">${title}</strong><br>` : '';
 
             $.notify({
                 icon: iconClass,

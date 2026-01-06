@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminControler;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\admin\TeacherController;
 use Illuminate\Support\Facades\Route;
 
 // admin is as prefix & name
 
-Route::get('/',[AdminControler::class, 'index'])->name('dashboard');
+Route::get('/',[AdminController::class, 'index'])->name('dashboard');
 
 Route::prefix('subject')->as('subject.')->group(function () {
     Route::get('list', [SubjectController::class, 'index'])->name('index');

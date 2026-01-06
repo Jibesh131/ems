@@ -3,7 +3,7 @@
     <div class="col-md-6">
         <div class="form-group">
             <label for="">Subject</label>
-            <select name="subject[]" id="subject" class="form-control">
+            <select name="subject[]" id="subject" class="form-control" readonly>
                 <option value="">Select Subject</option>
                 @foreach ($subjects as $subject)
                     <option value="{{ $subject->id ?? '' }}" {{ $fees->subject_id === $subject->id ? 'selected' : '' }}>{{ $subject->name ?? '' }}</option>
@@ -14,7 +14,7 @@
     <div class="col-md-6">
         <div class="form-group">
             <label for="">Session Fees</label>
-            <input type="number" name="fees[]" id="fees" value="{{ $fees->session_fee ?? '' }}" class="form-control">
+            <input type="number" name="fees[]" id="fees" value="{{ $fees->session_fee ?? '' }}" class="form-control" readonly>
         </div>
     </div>
 </div>

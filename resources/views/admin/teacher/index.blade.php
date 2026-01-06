@@ -45,14 +45,14 @@
                                     @endforeach
                                 </div>
                                 <div class="d-flex gap-1">
-                                    <button class="btn btn bg-primary-gradient text-light" data-toggle="tooltip"
+                                    <a href="{{ route('admin.teacher.edit', $teacher->id ?? 0) }}" class="btn btn bg-primary-gradient text-light" data-toggle="tooltip"
                                         data-placement="top" title="Edit Teacher">
                                         <i class="fa fa-pencil"></i>
-                                    </button>
-                                    <button class="btn bg-danger-gradient text-light" data-toggle="tooltip"
+                                    </a>
+                                    <a href="{{ route('admin.teacher.delete', $teacher->id ?? 0) }}" class="btn bg-danger-gradient text-light" data-toggle="tooltip"
                                         data-placement="top" title="Delete Teacher">
                                         <i class="fa fa-trash"></i>
-                                    </button>
+                                    </a>
                                     <button class="btn bg-secondary-gradient text-light" data-toggle="tooltip"
                                         data-placement="top" title="Schedule">
                                         <i class="fa-solid fa-calendar-days"></i>
@@ -104,7 +104,7 @@
                 </div>
             </div>
         @empty
-            <div class="card shadow-sm mb-3 border border-1 text-center">No records found</div>
+            <div class="p-3 text-center">No records found</div>
         @endforelse
         @include('admin.layout.inc.paginate', ['item' => $teachers])
     </div>
@@ -120,25 +120,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body" id="modalContent">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="">Subject</label>
-                                <select name="subject[]" id="subject" class="form-control">
-                                    <option value="">Select Subject</option>
-                                    @foreach ($subjects as $subject)
-                                        <option value="{{ $subject->id ?? '' }}">{{ $subject->name ?? '' }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="">Session Fees</label>
-                                <input type="number" name="fees[]" id="fees" class="form-control">
-                            </div>
-                        </div>
-                    </div>
+                    <p class="text-center text-primary">
+                        Loading...
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

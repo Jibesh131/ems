@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TeacherRequest;
 use App\Models\Subject;
 use App\Models\TeacherSubject;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class TeacherController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $title = 'Teachers';
         $search = true;
@@ -21,9 +23,12 @@ class TeacherController extends Controller
                 'name' => $title
             ]
         ];
-        $teachers = User::where('role', 'teacher')->orderBy('name');
+        $teachers = User::where('role', 'teacher');
+        if ($request->keyword) {
+            $teachers = $teachers->where('name', 'LIKE', '%' . $request->keyword . '%')->orderByRaw("LOCATE(?, LOWER(name))", [strtolower($request->keyword)]);
+        }
         $subjects = Subject::where('status', 'active')->get();
-        $teachers = $teachers->paginate(10);
+        $teachers = $teachers->orderBy('name')->paginate(10);
         return view('admin.teacher.index', compact('title', 'search', 'links', 'teachers', 'subjects'));
     }
 
@@ -45,7 +50,6 @@ class TeacherController extends Controller
 
     public function edit($id)
     {
-        $subject = User::findOrFail($id);
         $title = 'Edit Teacher';
         $links = [
             [
@@ -56,69 +60,38 @@ class TeacherController extends Controller
                 'name' => $title
             ]
         ];
-        return view('admin.teacher.form', compact('title', 'links', 'subject'));
+
+        $teacher = User::findOrFail($id);
+        $subjects = Subject::where('status', 'active')->get();
+        $session_fees = TeacherSubject::where('teacher_id', $id)->get();
+        return view('admin.teacher.form', compact('title', 'links', 'teacher', 'subjects', 'session_fees'));
     }
 
-    public function save(Request $request, $id = null)
+    public function save(TeacherRequest $request, $id = null)
     {
-        $validator = Validator::make($request->all(), [
-            'profile_pic' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . ($id ?? 'NULL') . ',id',
-            'phone' => 'required|string',  // TODO: improve phone validation
-            'password' => 'required|string|min:8',
-            'status' => 'required|in:active,inactive',
 
-            'subjects'   => 'nullable|array',
-            'subjects.*' => 'nullable|integer|distinct|exists:subjects,id',
+        $validated = $request->validated();
 
-            'fees'       => 'nullable|array',
-            'fees.*'     => 'nullable|numeric|min:1',
-        ], [
-            'subjects.*.distinct' => 'You cannot select the same subject more than once.',
-            'subjects.*.exists' => 'The selected subject is invalid.',
-            'fees.*.min' => 'Each session fee must be at least 1.',
-        ]);
-        $validator->after(function ($validator) use ($request) {
-            $subjects = $request->input('subjects', []);
-            $fees = $request->input('fees', []);
+        DB::beginTransaction();
 
-            foreach ($subjects as $index => $subject) {
-                $fee = $fees[$index] ?? null;
-
-                if (!empty($subject) && (empty($fee) || $fee < 1)) {
-                    $validator->errors()->add("fees.$index", "Session fee is required and must be at least 1.");
-                }
-
-                if (!empty($fee) && empty($subject)) {
-                    $validator->errors()->add("subjects.$index", "Subject is required when a session fee is provided.");
-                }
-            }
-        });
-        $validated = $validator->validate();
-
-        // Handle profile picture using helper
-        $path = 'profile_pics/teachers';
-        $validated['profile_pic'] = uploadImage($request->file('profile_pic'), $path, $id ? User::find($id)->profile_pic : null );
-
-        if ($id) {
-            // Edit
-            $this->update($validated, $id, $path);
-            $msg = 'Teacher updated successfully.';
-        } else {
-            // Add
-            $this->create($validated, $path);
-            $msg = 'Teacher added successfully.';
+        try {
+            $path = 'profile_pics/teachers';
+            $validated['profile_pic'] = uploadImage($request->file('profile_pic'), $path, $id ? User::find($id)->profile_pic : null);
+            $id ? $this->update($validated, $id): $this->create($validated);
+            DB::commit();
+            return redirect()->route('admin.teacher.index')->with('message', [
+                'status' => 'success',
+                'msg' => $id ? 'Teacher updated successfully.' : 'Teacher added successfully.',
+            ]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            logger()->error('Teacher save failed', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return back()->withErrors(['error' => 'Something went wrong. Please try again.'])->withInput();
         }
-        return redirect()->route('admin.teacher.index')->with('message', [
-            'status' => 'success',
-            'msg' => $msg
-        ]);
     }
 
-    public function create($validated, $path)
+    public function create($validated)
     {
-
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
@@ -127,42 +100,66 @@ class TeacherController extends Controller
             'phone' => $validated['phone'],
             'email_verified_at' => now(),
             'password' => Hash::make($validated['password']),
-            'status' => 'active',
+            'status' => $validated['status'],
             'bio'   => ''
         ]);
-        
-        $count = min(count($validated['subjects']), count($validated['fees']));
-        for ($i = 0; $i < $count; $i++) {
-            TeacherSubject::create([
-                'teacher_id' => $user->id,
-                'subject_id' => $validated['subjects'][$i],
-                'session_fee' => $validated['fees'][$i],
-                'is_active' => '1',
-            ]);
-        }
+
+        $this->syncSubjects($user, $validated);
     }
 
     public function update($validated, $id)
     {
         $user = User::findOrFail($id);
+
         $user->update([
-            'name' => $validated->name,
-            'email' => $validated->email,
-            'role'  => 'teacher',
-            'profile_pic' => '',
-            'phone' => $validated->phone,
-            'email_verified_at' => now(),
-            'password' => $validated->password,
-            'status' => 'active',
-            'bio'   => ''
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'profile_pic' => $validated['profile_pic'],
+            'phone' => $validated['phone'],
+            'password' => !empty($validated['password']) ? Hash::make($validated['password']) : $user->password,
+            'status' => $validated['status'],
         ]);
+
+        $this->syncSubjects($user, $validated);
     }
 
-    public function fees($id){
+    protected function syncSubjects($user, $validated)
+    {
+        $subjects = $validated['subjects'] ?? [];
+        $fees = $validated['fees'] ?? [];
+
+        TeacherSubject::where('teacher_id', $user->id)->delete();
+
+        if (empty($subjects) || empty($fees)) return;
+
+        $rows = collect($subjects)
+            ->zip($fees)
+            ->filter(fn($pair) => $pair[0] && $pair[1])
+            ->map(fn($pair) => [
+                'teacher_id' => $user->id,
+                'subject_id' => $pair[0],
+                'session_fee' => $pair[1],
+                'is_active' => 1,
+            ])->toArray();
+
+        if (!empty($rows)) {
+            TeacherSubject::insert($rows);
+        }
+    }
+
+    public function delete($id){
+        $user = User::findOrFail($id);
+        $user->delete();
+        return redirect()->route('admin.teacher.index')->with('message', [
+            'status' => 'success',
+            'msg' => 'Teacher Deleted Successfully'
+        ]); 
+    }
+
+    public function fees($id)
+    {
         $subjects = Subject::where('status', 'active')->get();
         $session_fees = TeacherSubject::where('teacher_id', $id)->get();
         return view('admin.components.fees-model', compact('subjects', 'session_fees'))->render();
     }
-
-
 }
