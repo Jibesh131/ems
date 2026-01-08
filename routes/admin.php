@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\admin\StudentController;
 use App\Http\Controllers\Admin\SubjectController;
 use App\Http\Controllers\admin\TeacherController;
 use Illuminate\Support\Facades\Route;
@@ -24,4 +25,14 @@ Route::prefix('teacher')->as('teacher.')->group(function () {
     Route::post('save/{id?}', [TeacherController::class, 'save'])->name('save');
     Route::get('delete/{id}', [TeacherController::class, 'delete'])->name('delete');
     Route::get('fees/{id}', [TeacherController::class, 'fees'])->name('fees');
+});
+
+Route::prefix('student')->as('student.')->group(function () {
+    Route::get('list', [StudentController::class, 'index'])->name('index');
+    Route::get('view', [StudentController::class, 'view'])->name('view');
+    // Route::get('add', [TeacherController::class, 'add'])->name('add');
+    // Route::get('edit/{id}', [TeacherController::class, 'edit'])->name('edit');
+    // Route::post('save/{id?}', [TeacherController::class, 'save'])->name('save');
+    // Route::get('delete/{id}', [TeacherController::class, 'delete'])->name('delete');
+    // Route::get('fees/{id}', [TeacherController::class, 'fees'])->name('fees');
 });

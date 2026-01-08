@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AdminAuthController extends Controller
+class TeacherAuthController extends Controller
 {
-    public function loginView(){
-        return view('auth.admin.login');
+    public function loginView()
+    {
+        return view('auth.teacher.login');
     }
 
-    public function loginPost(Request $request){
+    public function loginPost(Request $request)
+    {
         $request->validate([
             'email'    => 'required|email',
             'password' => 'required|min:8',
@@ -22,20 +24,22 @@ class AdminAuthController extends Controller
             return back()->withInput()->with('error', 'Invalid credentials.');
         }
 
-        if (Auth::user()->role !== 'admin') {
+        if (Auth::user()->role !== 'teacher') {
             Auth::logout();
             return back()->withInput()->with('error', 'You are not authorized to access this area.');
         }
 
         $request->session()->regenerate();
-        return redirect()->route('admin.dashboard');
+        return redirect()->route('teacher.dashboard');
     }
 
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('admin.login.view');
+
+        return redirect()->route('teacher.login.view');
     }
 }

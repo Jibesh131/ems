@@ -52,7 +52,7 @@ class User extends Authenticatable
 
     public function subjects(): BelongsToMany
     {
-        return $this->belongsToMany(Subject::class, 'teacher_subjects', 'teacher_id', 'subject_id');
+        return $this->belongsToMany(Subject::class, 'teacher_subjects', 'teacher_id', 'subject_id')->withPivot('session_fee');
     }
 
     public function getSubjectNames(): array

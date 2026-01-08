@@ -26,7 +26,7 @@
                 <div class="row w-100">
                     <div class="col-md-2 d-flex align-items-center justify-content-center ps-5">
                         <img src="{{ asset('../storage/' . $teacher->profile_pic) }}"
-                            class="img-fluid img-thumbnail rounded-circle" alt="{{ $teacher->name }}" width="115px">
+                            class="img-fluid img-thumbnail" alt="{{ $teacher->name }}" width="115px">
                     </div>
                     <div class="col-md-10">
                         <div class="card-body p-3 d-flex flex-column">
@@ -83,21 +83,12 @@
                                         <a href="tel:{{ $teacher->phone ?? '' }}">{{ $teacher->phone ?? '(empty)' }}</a>
                                     </p>
                                 </div>
-                                <div class="col-md-6">
+                                {{-- <div class="col-md-6">
                                     <p class="mb-1 small"><strong>Qualification:</strong> Ph.D. in Mathematics</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="mb-0 small"><strong>Employee ID:</strong> TCH-2024-001</p>
-                                </div>
-                                <div class="col-md-6 d-none">
-                                    <div
-                                        class="border border-2 border-dashed border-secondary rounded p-2 d-flex align-items-center justify-content-center">
-                                        <small class="text-muted text-center">
-                                            <i class="bi bi-plus-circle fs-5 d-block mb-1"></i>
-                                            Feature Placeholder
-                                        </small>
-                                    </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>

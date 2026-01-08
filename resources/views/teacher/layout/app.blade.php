@@ -40,7 +40,6 @@
     <link rel="stylesheet" href="{{ asset('admin/css/kaiadmin.min.css') }}" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.22.0/dist/sweetalert2.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" />
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
 
     <script src="{{ asset('admin/js/core/jquery-3.7.1.min.js') }}"></script>
@@ -77,14 +76,14 @@
 </head>
 
 <body>
-    @include('admin.layout.inc.alert')
+    @include('teacher.layout.inc.alert')
     <div class="wrapper">
-        @include('admin.layout.inc.sidebar')
+        @include('teacher.layout.inc.sidebar')
         <div class="main-panel">
-            @include('admin.layout.inc.navbar')
+            @include('teacher.layout.inc.navbar')
             <div class="container">
                 <div class="page-inner">
-                    @include('admin.layout.inc.breadcrumbs')
+                    @include('teacher.layout.inc.breadcrumbs')
                     <div class="row">
                         <div class="col-12">
                             <div class="card p-3">
@@ -138,6 +137,7 @@
                 info: 'fas fa-info-circle',
                 warning: 'fas fa-exclamation-triangle',
                 danger: 'fa-solid fa-circle-exclamation',
+                error: 'fa-solid fa-circle-exclamation',
                 black: 'fas fa-moon',
                 default: 'fas fa-bell'
             };
@@ -161,7 +161,6 @@
             });
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
     @stack('js')
 </body>
 

@@ -26,29 +26,21 @@ use Illuminate\Support\Str;
         <div class="sidebar-content">
             <ul class="nav nav-secondary">
                 <li class="nav-item">
-                    <a href="{{ route('admin.dashboard') }}">
+                    <a href="{{ route('teacher.dashboard') }}">
                         <i class="fas fa-home"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item {{ Str::is('admin.subject.*', request()->route()->getName()) ? 'active' : '' }}">
-                    <a href="{{ route('admin.subject.index') }}">
-                        <i class="fa-solid fa-book"></i>
-                        <p>Subjects</p>
+                <li class="nav-item {{ Str::is('admin.avaliability.*', request()->route()->getName()) ? 'active' : '' }}">
+                    <a href="{{ route('teacher.availability.index') }}">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <p>Availability</p>
                     </a>
                 </li>
-                <li class="nav-item {{ Str::is('admin.teacher.*', request()->route()->getName()) ? 'active' : '' }}">
-                    <a href="{{ route('admin.teacher.index') }}">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                         {{-- <i class="fa-solid fa-chalkboard-user"></i> --}}
-                        <p>Teachers</p>
-                    </a>
-                </li>
-                <li class="nav-item {{ Str::is('admin.student.*', request()->route()->getName()) ? 'active' : '' }}">
-                    <a href="{{ route('admin.student.index') }}">
-                        {{-- <i class="fas fa-user-graduate"></i> --}}
-                        <i class="fas fa-book-reader"></i>
-                        <p>Students</p>
+                <li class="nav-item {{ Str::is('admin.avaliability.*', request()->route()->getName()) ? 'active' : '' }}">
+                    <a href="{{ route('teacher.availability.index') }}">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <p>Availability</p>
                     </a>
                 </li>
                 {{-- <li class="nav-item {{ (request()?->route()?->getName() ?? '') == 'admin.index' ? 'active' : '' }}">

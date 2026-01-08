@@ -65,42 +65,6 @@ if (!function_exists('format_amount_without_commas')) {
     }
 }
 
-if (!function_exists('uploadImage')) {
-
-    /**
-     * Upload an image to storage with unique name
-     *
-     * @param UploadedFile|string|null $image The uploaded file from request
-     * @param string $folder The folder in 'storage/app/public' to save
-     * @param string|null $oldFile Optional: path of old file to delete
-     * @return string|null Stored file path relative to 'storage/app/public'
-     */
-    function uploadImage($image, string $folder = 'images', ?string $oldFile = null): ?string
-    {
-        if (!$image) {
-            // If no new image, return old file or null
-            return $oldFile ?? null;
-        }
-
-        // Make sure folder exists
-        if (!Storage::disk('public')->exists($folder)) {
-            Storage::disk('public')->makeDirectory($folder);
-        }
-
-        // Delete old file if exists
-        if ($oldFile && Storage::disk('public')->exists($oldFile)) {
-            Storage::disk('public')->delete($oldFile);
-        }
-
-        // Build unique filename: uniqid + timestamp + original extension
-        $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
-
-        // Store in given folder
-        return $image->storeAs($folder, $filename, 'public');
-    }
-}
-
-
 if (! function_exists('json_to_array')) {
     function json_to_array($data)
     {
@@ -159,5 +123,55 @@ if (!function_exists('status_badge')) {
             'pending' => 'badge-warning',
             default => 'badge-secondary',
         };
+    }
+}
+
+if (!function_exists('uploadImage')) {
+
+    function uploadImage($image, string $folder = 'images', ?string $oldFile = null): ?string
+    {
+        if (!$image) {
+            return $oldFile ?? null;
+        }
+        if (!Storage::disk('public')->exists($folder)) {
+            Storage::disk('public')->makeDirectory($folder);
+        }
+        if ($oldFile && Storage::disk('public')->exists($oldFile)) {
+            Storage::disk('public')->delete($oldFile);
+        }
+        $filename = uniqid() . '_' . time() . '.' . $image->getClientOriginalExtension();
+
+        return $image->storeAs($folder, $filename, 'public');
+    }
+}
+
+if (!function_exists('format_duration')) {
+    function format_duration($start, $end)
+    {
+        if (empty($start) || empty($end)) {
+            return '-';
+        }
+
+        try {
+            $startTime = Carbon::parse($start);
+            $endTime   = Carbon::parse($end);
+
+            $diff = $startTime->diff($endTime);
+
+            $hours = $diff->h;
+            $minutes = $diff->i;
+
+            $parts = [];
+            if ($hours > 0) {
+                $parts[] = $hours . ' hr' . ($hours > 1 ? 's' : '');
+            }
+            if ($minutes > 0) {
+                $parts[] = $minutes . ' min';
+            }
+
+            return implode(' ', $parts);
+        } catch (\Exception $e) {
+            return '-';
+        }
     }
 }
