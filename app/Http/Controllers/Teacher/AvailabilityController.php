@@ -20,9 +20,9 @@ class AvailabilityController extends Controller
         $title = 'Avaliability';
         $search = true;
         $links = [];
-        $availabilities = Availability::where('teacher_id', auth('web')->id())->orderBy('date')->orderBy('start_time')->get()->groupBy('date');
-        // dd($availabilities);
-        return view('teacher.availability.index', compact('title', 'search', 'links', 'availabilities'));
+        $availabilities = Availability::with('subject')->where('teacher_id', auth('web')->id())->orderBy('date')->orderBy('start_time')->get()->groupBy('date');
+        $subjects = User::where('role', 'teacher')->with('subjects')->find(auth('web')->id())->subjects;
+        return view('teacher.availability.index', compact('title', 'search', 'links', 'availabilities', 'subjects'));
     }
 
     public function add()

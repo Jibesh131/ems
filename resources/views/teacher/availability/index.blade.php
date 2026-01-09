@@ -18,18 +18,18 @@
     <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
         <form action="" method="get" autocomplete="off">
             <div class="d-flex gap-2 flex-wrap">
-                <input type="date" name="" id="" class="form-control" style="width: 160px;">
+                <input type="date" name="date" id="" class="form-control" style="width: 160px;">
 
-                <select class="form-select" style="width: 160px;" name="type">
+                <select class="form-select" style="width: 160px;" name="subject">
                     <option value="" {{ blank(request()->type) ? 'selected' : '' }}>Select Subject</option>
-                    <option value="movie" {{ request()->type == 'movie' ? 'selected' : '' }}>Movie</option>
-                    <option value="video" {{ request()->type == 'video' ? 'selected' : '' }}>Video</option>
-                    <option value="music" {{ request()->type == 'music' ? 'selected' : '' }}>Music</option>
+                    @foreach ($subjects as $subject)
+                    <option value="{{ $subject->id }}" {{ request()->subject == $subject->id ? 'selected' : '' }}>{{ $subject->name  }}</option>
+                    @endforeach
                 </select>
 
                 <button type="submit" class="btn btn-secondary">Filter <i
                         class="fa fa-filter opacity-75 ms-1"></i></button>
-                @if (!empty(request()->keyword) || !empty(request()->type) || !empty(request()->status) || !empty(request()->time))
+                @if (!empty(request()->keyword) || !empty(request()->date) || !empty(request()->subject))
                     <a href="{{ route('teacher.availability.index') }}" class="btn btn-danger">
                         Clear <i class="fa fa-xmark fa-fw ms-1" style="font-size: 1rem;"></i>
                     </a>
@@ -56,7 +56,8 @@
                                         </h5>
                                     </div>
                                     <div class="col-auto">
-                                        <span class="badge bg-white text-primary">{{ count($items) }} slots</span>
+                                        <span class="badge bg-white text-primary"><strong>{{ count($items) }}
+                                            </strong>slots</span>
                                     </div>
                                 </div>
                             </div>
@@ -83,6 +84,10 @@
                                                     </div>
                                                 </div>
                                                 <div class="col">
+                                                    <span class="badge badge-black"> Subject: {{ $item->subject->name }}
+                                                    </span>
+                                                </div>
+                                                <div class="col">
                                                     <span class="badge badge-success"> 3 Joined </span>
                                                 </div>
                                                 <div class="col-auto">
@@ -107,19 +112,17 @@
                         </div>
                     </div>
                 @empty
+                    <div id="emptyState" class="text-center text-muted py-5 d-none">
+                        <i class="bi bi-calendar-x" style="font-size: 3rem;"></i>
+                        <p class="mt-3 mb-3">No availability slots defined yet.</p>
+                        <a href="{{ route('teacher.availability.add') }}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>Add Your First Slot
+                        </a>
+                    </div>
                 @endforelse
             </div>
         </div>
 
-
-
-        {{-- <div id="emptyState" class="text-center text-muted py-5 d-none">
-            <i class="bi bi-calendar-x" style="font-size: 3rem;"></i>
-            <p class="mt-3 mb-3">No availability slots defined yet.</p>
-            <a href="add-availability.html" class="btn btn-primary">
-                <i class="bi bi-plus-circle me-1"></i>Add Your First Slot
-            </a>
-        </div> --}}
     </div>
 @endsection
 
