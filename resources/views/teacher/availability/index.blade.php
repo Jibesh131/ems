@@ -43,15 +43,16 @@
     </div>
     <div class="card-body">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row gx-2">
                 @forelse ($availabilities as $date => $items)
-                    <div class="col-12 px-1 mb-3 shadow">
-                        <div class="h-100 border border-1 border-primary" style="overflow: hidden;">
-                            <div class="card-header bg-primary text-white">
+                    <div class="col-12 col-xl-12">
+                        <div class="card border" style="overflow:hidden;">
+                            <div class="card-header bg-primary text-white" style="border-radius: 5px 5px 0 0;">
                                 <div class="row align-items-center">
                                     <div class="col">
                                         <h5 class="mb-0">
-                                            <i class="bi bi-calendar-day me-2"></i>{{ format_date($date, 'l') . '  -  ' . $date }}
+                                            <i class="bi bi-calendar-day me-2"></i>
+                                            {{ format_date($date, 'l') . ' - ' . $date }}
                                         </h5>
                                     </div>
                                     <div class="col-auto">
@@ -59,38 +60,50 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="card-body p-0">
-                                @foreach ($items as $item)
-                                    <div class="row align-items-center p-3">
-                                    <div class="col">
-                                        <div class="row align-items-center">
-                                            <div class="col-auto">
-                                                <div class="bg-light rounded-circle p-2"
-                                                    style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
-                                                    <i class="fa-solid fa-clock text-primary"></i>
+                                <ul class="list-group">
+                                    @foreach ($items as $item)
+                                        <li class="list-group-item py-3 px-0">
+                                            <div class="row w-100 align-items-center ms-0">
+                                                <div class="col">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-auto">
+                                                            <div class="bg-white rounded-circle p-2"
+                                                                style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
+                                                                <i class="fa-solid fa-clock text-primary"></i>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="fw-semibold">
+                                                                {{ format_date($item->start_time, 'h:i A') }} -
+                                                                {{ format_date($item->end_time, 'h:i A') }} </div>
+                                                            <small class="text-muted">Duration:
+                                                                {{ format_duration($item->start_time, $item->end_time) }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <span class="badge badge-success"> 3 Joined </span>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <div class="btn-group">
+                                                        <button class="btn bg-primary-gradient text-white btn-sm"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            data-bs-title="Edit">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </button>
+                                                        <button class="btn bg-danger-gradient text-white btn-sm"
+                                                            data-bs-toggle="tooltip" data-bs-placement="top"
+                                                            data-bs-title="Cancle">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col">
-                                                <div class="fw-semibold">{{ format_date($item->start_time, 'h:i A') }}  -  {{ format_date($item->end_time, 'h:i A') }} </div>
-                                                <small class="text-muted">Duration: {{ format_duration($item->start_time, $item->end_time)}}</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="btn-group">
-                                            <button class="btn btn-outline-primary btn-sm">
-                                                <i class="fa fa-pencil"></i>
-                                            </button>
-                                            <button class="btn btn-outline-danger btn-sm">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                @endforeach
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </div>
-
                         </div>
                     </div>
                 @empty

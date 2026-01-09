@@ -60,4 +60,8 @@ class User extends Authenticatable
         return $this->subjects()->pluck('name')->toArray();
     }
 
+    public function availabilities()
+    {
+        return $this->hasMany(Availability::class, 'teacher_id');
+    }
 }
