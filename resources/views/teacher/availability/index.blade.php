@@ -18,12 +18,13 @@
     <div class="card-header d-flex justify-content-between align-items-center flex-wrap">
         <form action="" method="get" autocomplete="off">
             <div class="d-flex gap-2 flex-wrap">
-                <input type="date" name="date" id="" class="form-control" style="width: 160px;">
+                <input type="date" name="date" id="" class="form-control" value="{{ request()->date }}" style="width: 160px;">
 
                 <select class="form-select" style="width: 160px;" name="subject">
-                    <option value="" {{ blank(request()->type) ? 'selected' : '' }}>Select Subject</option>
+                    <option value="" {{ blank(request()->subject) ? 'selected' : '' }}>Select Subject</option>
                     @foreach ($subjects as $subject)
-                    <option value="{{ $subject->id }}" {{ request()->subject == $subject->id ? 'selected' : '' }}>{{ $subject->name  }}</option>
+                        <option value="{{ $subject->id }}" {{ request()->subject == $subject->id ? 'selected' : '' }}>
+                            {{ $subject->name }}</option>
                     @endforeach
                 </select>
 
@@ -51,8 +52,8 @@
                                 <div class="row align-items-center">
                                     <div class="col">
                                         <h5 class="mb-0">
-                                            <i class="bi bi-calendar-day me-2"></i>
-                                            {{ format_date($date, 'l') . ' - ' . $date }}
+                                            <i class="fa-solid fa-calendar-day me-2"></i>
+                                            {{ format_date($date, 'd M y') . ' ( ' . format_date($date, 'l') . ' )' }}
                                         </h5>
                                     </div>
                                     <div class="col-auto">
@@ -88,20 +89,21 @@
                                                     </span>
                                                 </div>
                                                 <div class="col">
-                                                    <span class="badge badge-success"> 3 Joined </span>
+                                                    <span class="badge badge-success"> {{ $item->bookings_count ?? '' }}
+                                                        Joined </span>
                                                 </div>
                                                 <div class="col-auto">
                                                     <div class="btn-group">
-                                                        <button class="btn bg-primary-gradient text-white btn-sm"
+                                                        <a href="{{ route('teacher.availability.edit', $item->id ?? 0) }}" class="btn bg-primary-gradient text-white btn-sm"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             data-bs-title="Edit">
                                                             <i class="fa fa-pencil"></i>
-                                                        </button>
-                                                        <button class="btn bg-danger-gradient text-white btn-sm"
+                                                        </a>
+                                                        <a href="{{ route('teacher.availability.delete', $item->id ?? 0) }}" class="btn bg-danger-gradient text-white btn-sm"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
                                                             data-bs-title="Cancle">
                                                             <i class="fa fa-trash"></i>
-                                                        </button>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </div>

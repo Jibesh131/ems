@@ -8,6 +8,12 @@ class Availability extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'date'       => 'date',
+        'start_time' => 'datetime:H:i',
+        'end_time'   => 'datetime:H:i',
+    ];
+
     public function teacher()
     {
         return $this->belongsTo(User::class, 'teacher_id');
@@ -16,5 +22,10 @@ class Availability extends Model
     public function subject()
     {
         return $this->belongsTo(Subject::class);
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'availability_id');
     }
 }

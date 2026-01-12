@@ -17,11 +17,16 @@
                 <div class="col-md-6 mb-3">
                     <label for="subject" class="form-label">Subject</label>
                     <select name="subject" id="subject" class="form-select">
-                        <option value="" disabled>Select Subject</option>
+                        <option value="" {{ old('subject', $availability->subject_id ?? '') == '' ? 'selected' : '' }}
+                            disabled>Select Subject</option>
                         @foreach ($subjects ?? [] as $subject)
-                            <option value="{{ $subject?->id ?? '' }}">{{ $subject?->name ?? '' }}</option>
+                            <option value="{{ $subject->id }}"
+                                {{ old('subject', $availability->subject_id ?? '') == $subject->id ? 'selected' : '' }}>
+                                {{ $subject->name }}
+                            </option>
                         @endforeach
                     </select>
+
                     @error('subject')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
