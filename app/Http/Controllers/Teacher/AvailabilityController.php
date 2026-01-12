@@ -126,7 +126,7 @@ class AvailabilityController extends Controller
 
             return redirect()->route('teacher.availability.index')->with('message', [
                 'status' => 'success',
-                'msg' => $id ? 'Teacher updated successfully.' : 'Teacher added successfully.',
+                'msg' => $id ? 'Availability updated successfully.' : 'Availability added successfully.',
             ]);
         } catch (Throwable $e) {
             logger()->error('Availability save failed', [
@@ -137,9 +137,19 @@ class AvailabilityController extends Controller
         }
     }
 
-
     public function delete($id){
-        return 'Delete';
+        $ava = Availability::findOrFail($id);
+        $ava = $ava->delete();
+        return redirect()->route('teacher.availability.index')->with('message', [
+            'status' => 'success',
+            'msg' => 'Availability deleted successfully',
+        ]);
         // TODO - Add the delete functiona
+    }
+
+    public function getFees($id){  //Subject ID
+        $teacher_id = auth('web')->id();
+        $fees = TeacherSubject::where('teacher_id', $teacher_id)->where('subject_id', $id)->get();
+        return $fees;
     }
 }

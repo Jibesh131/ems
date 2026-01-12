@@ -73,4 +73,16 @@
 @endpush
 
 @push('js')
+    <script>
+        $(function() {
+            $('#subject').on('change', function() {
+                let selectedValue = $(this).val();
+                let url = "{{ route('teacher.availability.getFees') }}/" + selectedValue;
+                console.log("URL:", url);
+                // $.ajax({
+                //     url: '{{ route("admin.teacher.fees", ":id") }}'.replace(':id', teacher_id),
+                // });
+            });
+        });
+    </script>
 @endpush

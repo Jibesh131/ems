@@ -12,4 +12,5 @@ Route::prefix('availability')->as('availability.')->group(function() {
     Route::get('edit/{id}', [AvailabilityController::class, 'edit'])->name('edit');
     Route::post('save/{id?}', [AvailabilityController::class, 'save'])->name('save');
     Route::get('delete/{id}', [AvailabilityController::class, 'delete'])->name('delete');
+    Route::get('getFees/{id}', [AvailabilityController::class, 'getFees'])->name('getFees');
 });
