@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     @if(session('message'))
         let msg = @json(session('message'));
-        showNotify(msg.status, msg.msg, msg.status);
+        showNotify(msg.status, msg.msg, msg.title || msg.status);
     @endif
 
     @if(session('error'))

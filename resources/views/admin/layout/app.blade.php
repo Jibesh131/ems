@@ -109,7 +109,7 @@
                     cancelButtonText: 'Cancel',
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        window.location.href = "{{ route('admin.logout') }}";
+                        window.location.href = "{{ route('user.logout') }}";
                     }
                 });
             })

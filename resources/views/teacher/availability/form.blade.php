@@ -61,8 +61,13 @@
                     @enderror
                 </div>
 
-                <div class="col-12 text-end">
-                    <button type="submit" class="btn btn-primary ">Submit</button>
+                <div class="col-md-6">
+                    <label for="fees" class="form-label">Session Fees</label>
+                    <input type="text" class="form-control" id="fees" value="{{ format_amount($fees ?? '') }}" readonly>
+                </div>
+
+                <div class="col-md-6 text-end" style="margin-top: 30px;"> 
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </form>
@@ -77,11 +82,22 @@
         $(function() {
             $('#subject').on('change', function() {
                 let selectedValue = $(this).val();
-                let url = "{{ route('teacher.availability.getFees') }}/" + selectedValue;
-                console.log("URL:", url);
-                // $.ajax({
-                //     url: '{{ route("admin.teacher.fees", ":id") }}'.replace(':id', teacher_id),
-                // });
+                let url = '{{ route("teacher.availability.getFees", ":id") }}'.replace(':id', selectedValue);
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    dataType: 'JSON',
+                    success: function(res){
+                        $('#fees').val('$' + res.toFixed(2));
+                        console.log(res.toFixed(2));
+                    },
+                    error: function(){
+
+                    },
+                    complete: function() {
+                        
+                    }
+                });
             });
         });
     </script>

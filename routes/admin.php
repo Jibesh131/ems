@@ -25,6 +25,7 @@ Route::prefix('teacher')->as('teacher.')->group(function () {
     Route::post('save/{id?}', [TeacherController::class, 'save'])->name('save');
     Route::get('delete/{id}', [TeacherController::class, 'delete'])->name('delete');
     Route::get('fees/{id}', [TeacherController::class, 'fees'])->name('fees');
+    Route::get('availability/{id}', [TeacherController::class, 'availability'])->name('availability');
 });
 
 Route::prefix('student')->as('student.')->group(function () {

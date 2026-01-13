@@ -11,11 +11,52 @@
         .badge-success {
             background-color: #0c9f10;
         }
+
+        .time-slot {
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        .time-slot.available {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .time-slot.booked {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .time-slot .time {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .time-slot .subject {
+            font-size: 12px;
+            font-weight: 500;
+            display: block;
+        }
+
+        .day-header {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
     </style>
 @endpush
 
 @section('content')
     <div class="card-header text-end">
+
         <a href="{{ route('admin.teacher.add') }}" class="btn btn-primary btn-sm">
             Add New
         </a>
@@ -25,8 +66,8 @@
             <div class="card shadow-sm mb-3 border border-1" style="overflow: hidden;">
                 <div class="row w-100">
                     <div class="col-md-2 d-flex align-items-center justify-content-center ps-5">
-                        <img src="{{ asset('../storage/' . $teacher->profile_pic) }}"
-                            class="img-fluid img-thumbnail" alt="{{ $teacher->name }}" width="115px">
+                        <img src="{{ $teacher->profile_pic ? asset('../storage/' . $teacher->profile_pic) : asset('../storage/profile_pics/teachers/695b898d0fc5b_1767606669.jpg') }}"
+                            class="img-fluid img-thumbnail" alt="{{ $teacher->name }}" width="115">
                     </div>
                     <div class="col-md-10">
                         <div class="card-body p-3 d-flex flex-column">
@@ -45,20 +86,24 @@
                                     @endforeach
                                 </div>
                                 <div class="d-flex gap-1">
-                                    <a href="{{ route('admin.teacher.edit', $teacher->id ?? 0) }}" class="btn btn bg-primary-gradient text-light" data-toggle="tooltip"
+                                    <a href="{{ route('admin.teacher.edit', $teacher->id ?? 0) }}"
+                                        class="btn btn bg-primary-gradient text-light" data-toggle="tooltip"
                                         data-placement="top" title="Edit Teacher">
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a href="{{ route('admin.teacher.delete', $teacher->id ?? 0) }}" class="btn bg-danger-gradient text-light" data-toggle="tooltip"
-                                        data-placement="top" title="Delete Teacher">
+                                    <a href="{{ route('admin.teacher.delete', $teacher->id ?? 0) }}"
+                                        class="btn bg-danger-gradient text-light" data-toggle="tooltip" data-placement="top"
+                                        title="Delete Teacher">
                                         <i class="fa fa-trash"></i>
                                     </a>
-                                    <button class="btn bg-secondary-gradient text-light" data-toggle="tooltip"
-                                        data-placement="top" title="Schedule">
+                                    <button class="btn bg-secondary-gradient text-light ava-model" data-toggle="tooltip"
+                                        data-placement="top" title="Availability" data-bs-toggle="modal"
+                                        data-bs-target="#availabilityModal" data-teacher-id="{{ $teacher->id ?? '0' }}">
                                         <i class="fa-solid fa-calendar-days"></i>
+                                        <span class="spinner-border spinner-border-sm text-light d-none"
+                                            role="status"></span>
                                     </button>
-                                    <button id="openModalBtn"
-                                        style="padding-right: 15.25px !important; padding-left: 15.25px !important;"
+                                    <button style="padding-right: 15.25px !important; padding-left: 15.25px !important;"
                                         class="btn bg-black-gradient text-light px-3 fees-model" data-bs-toggle="modal"
                                         data-bs-target="#sessionFeesModel" data-toggle="tooltip" data-placement="top"
                                         title="Schedule" data-teacher-id="{{ $teacher->id ?? '0' }}">
@@ -74,7 +119,8 @@
                                 <div class="col-md-6">
                                     <p class="mb-1 small">
                                         <strong>Email:</strong>
-                                        <a href="mailto:{{ $teacher->email ?? '' }}">{{ $teacher->email ?? '(empty)' }}</a>
+                                        <a
+                                            href="mailto:{{ $teacher->email ?? '' }}">{{ $teacher->email ?? '(empty)' }}</a>
                                     </p>
                                 </div>
                                 <div class="col-md-6">
@@ -122,6 +168,36 @@
             </div>
         </div>
     </div>
+
+    <!-- Availibility Modal -->
+    <div class="modal fade" id="availabilityModal" tabindex="-1" aria-labelledby="availabilityModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="availabilityModalLabel">
+                        <i class="bi bi-calendar-check"></i> Teacher Availability
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="availabilityModalBody">
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-secondary">
+                        &laquo; Previous
+                    </button>
+
+                    <button type="button" class="btn btn-primary">
+                        Next &raquo;
+                    </button>
+                </div>
+                <div class="modal-footer d-none">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endpush
 
 
@@ -145,7 +221,7 @@
 
                 // Ajax call
                 $.ajax({
-                    url: '{{ route("admin.teacher.fees", ":id") }}'.replace(':id', teacher_id),
+                    url: '{{ route('admin.teacher.fees', ':id') }}'.replace(':id', teacher_id),
                     method: 'GET',
                     dataType: 'html',
                     success: function(response) {
@@ -154,7 +230,44 @@
                     error: function() {
                         $modalContent.html(
                             '<div class="text-danger text-center">Failed to load data.</div>'
-                            );
+                        );
+                    },
+                    complete: function() {
+                        $spinner.addClass('d-none');
+                        $icon.removeClass('d-none');
+                        $btn.prop('disabled', false);
+                    }
+                });
+            });
+
+            $('.ava-model').on('click', function(e) {
+                e.preventDefault();
+
+                var $btn = $(this);
+                var $spinner = $btn.find('.spinner-border');
+                var $icon = $btn.find('i');
+                var $modalContent = $('#availabilityModalBody');
+                var teacher_id = $btn.data('teacher-id');
+
+                $btn.prop('disabled', true);
+                $spinner.removeClass('d-none');
+                $icon.addClass('d-none');
+
+                $modalContent.html('<div class="text-center py-3">Loading...</div>');
+
+                // Ajax call
+                $.ajax({
+                    url: '{{ route('admin.teacher.availability', ':id') }}'.replace(':id',
+                        teacher_id),
+                    method: 'GET',
+                    dataType: 'html',
+                    success: function(response) {
+                        $modalContent.html(response);
+                    },
+                    error: function() {
+                        $modalContent.html(
+                            '<div class="text-danger text-center">Failed to load data.</div>'
+                        );
                     },
                     complete: function() {
                         $spinner.addClass('d-none');

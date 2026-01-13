@@ -3,43 +3,43 @@
 namespace App\Services;
 
 use App\Models\Availability;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class AvailabilityService
 {
-    public function getAll(array $filters = [])
-    {
+    public function getAll(
+        array $filters = [], ?string $fromDate = null, ?string $toDate = null) {
         $query = Availability::with(['teacher', 'subject']);
 
-        // Date filter
-        if (!empty($filters['date'])) {
+        if ($fromDate || $toDate) {
+            $from = $fromDate ? Carbon::parse($fromDate)->startOfDay() : Carbon::minValue();
+
+            $to = $toDate ? Carbon::parse($toDate)->endOfDay() : Carbon::maxValue();
+
+            $query->whereBetween('date', [$from, $to]);
+        } elseif (!empty($filters['date'])) {
             $query->whereDate('date', $filters['date']);
         }
 
-        // Teacher filter
         if (!empty($filters['teacher_id'])) {
             $query->where('teacher_id', $filters['teacher_id']);
         }
 
-        // Subject filter
         if (!empty($filters['subject_id'])) {
             $query->where('subject_id', $filters['subject_id']);
         }
 
-        // Payment filter
         if (!empty($filters['paid'])) {
             if ($filters['paid'] === 'paid') {
                 $query->whereNotNull('payment_id');
-            }
-
-            if ($filters['paid'] === 'unpaid') {
+            } elseif ($filters['paid'] === 'unpaid') {
                 $query->whereNull('payment_id');
             }
         }
 
         return $query->get();
     }
-
     public function getTeacher(array $filters = [])
     {
         return Availability::query()

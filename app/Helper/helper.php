@@ -131,7 +131,7 @@ if (!function_exists('uploadImage')) {
     function uploadImage($image, string $folder = 'images', ?string $oldFile = null): ?string
     {
         if (!$image) {
-            return $oldFile ?? null;
+            return $oldFile;
         }
         if (!Storage::disk('public')->exists($folder)) {
             Storage::disk('public')->makeDirectory($folder);

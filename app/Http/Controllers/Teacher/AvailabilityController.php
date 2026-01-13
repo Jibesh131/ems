@@ -65,7 +65,8 @@ class AvailabilityController extends Controller
         ];
         $availability = Availability::findOrFail($id);
         $subjects = User::where('role', 'teacher')->with('subjects')->find(auth('web')->id())->subjects;
-        return view('teacher.availability.form', compact('title', 'search', 'links', 'subjects', 'availability'));
+        $fees = $this->getFees($availability->subject_id);
+        return view('teacher.availability.form', compact('title', 'search', 'links', 'subjects', 'availability', 'fees'));
     }
 
     public function save(Request $request, $id = null)
@@ -149,7 +150,7 @@ class AvailabilityController extends Controller
 
     public function getFees($id){  //Subject ID
         $teacher_id = auth('web')->id();
-        $fees = TeacherSubject::where('teacher_id', $teacher_id)->where('subject_id', $id)->get();
-        return $fees;
+        $fees = TeacherSubject::select('session_fee')->where('teacher_id', $teacher_id)->where('subject_id', $id)->first();
+        return $fees->session_fee;
     }
 }

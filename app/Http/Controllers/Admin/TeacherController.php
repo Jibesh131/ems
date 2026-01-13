@@ -7,6 +7,8 @@ use App\Http\Requests\TeacherRequest;
 use App\Models\Subject;
 use App\Models\TeacherSubject;
 use App\Models\User;
+use App\Services\AvailabilityService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -14,6 +16,14 @@ use Illuminate\Support\Facades\Validator;
 
 class TeacherController extends Controller
 {
+
+    protected AvailabilityService $availability_service;
+
+    public function __construct(AvailabilityService $availability_service)
+    {
+        $this->availability_service = $availability_service;
+    }
+
     public function index(Request $request)
     {
         $title = 'Teachers';
@@ -161,5 +171,19 @@ class TeacherController extends Controller
         $subjects = Subject::where('status', 'active')->get();
         $session_fees = TeacherSubject::where('teacher_id', $id)->get();
         return view('admin.components.fees-model', compact('subjects', 'session_fees'))->render();
+    }
+
+    public function availability($id)
+    {
+        $teacher = User::findOrFail($id);
+        $now = Carbon::now();
+        // This week's range (Mon–Sun)
+        $startDate = $now->copy()->startOfWeek();
+        $endDate   = $now->copy()->endOfWeek();
+        $availabilities = $this->availability_service->getAll( ['teacher_id' => $id], $startDate, $endDate);
+        $weeklyData = $availabilities->groupBy(function ($item) {
+            return Carbon::parse($item->date)->toDateString();
+        });
+        return view('admin.components.availability-model', compact('teacher', 'weeklyData', 'startDate', 'endDate'))->render();
     }
 }
