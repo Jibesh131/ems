@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class UserAuthController extends Controller
 {
@@ -81,4 +82,53 @@ class UserAuthController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('user.login.view');
     }
+
+    public function forgotPasswordView(){
+        return view('auth.user.forget-password');
+    }
+
+    public function forgotPasswordPost(Request $request){
+        $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('success', __($status))
+            : back()->withErrors(['email' => __($status)]);
+    
+    }
+
+
+    public function passwordReset(string $token){
+        return view('auth.user.reset-password', [
+            'token' => $token,
+            'email' => request('email'),
+        ]);
+    }
+
+    public function passwordUpdate(Request $request){
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:8',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->password = Hash::make($password);
+                $user->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect('/login')->with('success', __($status))
+            : back()->withErrors(['email' => __($status)]);
+    
+    }
+
 }

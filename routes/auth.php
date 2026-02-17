@@ -11,7 +11,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
     Route::get('logout', [AdminAuthController::class, 'logout'])->name('logout');
 });
 
-Route::prefix('teacher')->as('teacher.')->group(function (){
+Route::prefix('teacher')->as('teacher.')->group(function () {
     Route::get('login', [TeacherAuthController::class, 'loginView'])->name('login.view');
     Route::post('login', [TeacherAuthController::class, 'loginPost'])->name('login.post');
     Route::get('logout', [TeacherAuthController::class, 'logout'])->name('logout');
@@ -20,7 +20,16 @@ Route::prefix('teacher')->as('teacher.')->group(function (){
 Route::as('user.')->group(function () {
     Route::get('login', [UserAuthController::class, 'loginView'])->name('login.view');
     Route::post('login', [UserAuthController::class, 'loginPost'])->name('login.post');
+
     Route::get('signup', [UserAuthController::class, 'signupView'])->name('signup.view');
     Route::post('signup', [UserAuthController::class, 'signupPost'])->name('signup.post');
+
     Route::get('logout', [UserAuthController::class, 'logout'])->name('logout');
+
+    Route::get('forgot-password', [UserAuthController::class, 'forgotPasswordView'])->name('forgot.password.view');
+    Route::post('forgot-password', [UserAuthController::class, 'forgotPasswordPost'])->name('forgot.password.post');
 });
+
+
+Route::get('reset-password/{token}', [UserAuthController::class, 'passwordReset'])->name('password.reset');
+Route::post('reset-password', [UserAuthController::class, 'passwordUpdate'])->name('password.update');

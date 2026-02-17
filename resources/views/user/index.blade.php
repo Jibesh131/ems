@@ -56,7 +56,7 @@
 
 @section('content')
     <div class="card-header">
-        <h2 class="fw-bold">Welcome back, {{ auth()->name() }}! 👋</h2>
+        <h2 class="fw-bold">Welcome back, {{ auth()->user()?->name ?? '' }} ! 👋</h2>
         <p class="text-muted">Here's what's happening with your learning journey today.</p>
     </div>
     <div class="card-body">

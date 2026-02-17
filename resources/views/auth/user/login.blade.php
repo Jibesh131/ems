@@ -22,7 +22,7 @@
 <body>
     <div class="container d-flex align-items-center justify-content-center min-vh-100 py-5">
         <div class="login-container w-100">
-            <div class="card shadow-lg border-0 rounded-4">
+            <div class="card shadow-lg border-0 rounded-5">
                 <!-- Header -->
                 <div class="card-header bg-primary text-white text-center py-3 rounded-top-4">
                     <h2 class="mb-1" style="font-weight:700;">Welcome Back</h2>
@@ -71,7 +71,7 @@
                                     Remember me
                                 </label>
                             </div>
-                            <a href="#" class="text-decoration-none">Forgot Password?</a>
+                            <a href="{{ route('user.forgot.password.view') }}" class="text-decoration-none">Forgot Password?</a>
                         </div>
 
                         <!-- Submit Button -->
@@ -82,7 +82,7 @@
                         </div>
 
                         <!-- Sign Up Link -->
-                        <div class="text-center mt-4">
+                        <div class="text-center mt-3">
                             <p class="text-muted mb-0">
                                 Don't have an account? <a href="{{ route('user.signup.view') }}"
                                     class="text-decoration-none fw-semibold">Sign Up</a>
